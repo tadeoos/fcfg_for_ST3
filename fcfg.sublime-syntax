@@ -1,0 +1,91 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+file_extensions:
+  - fcfg
+scope: text.fcfg
+contexts:
+  main:
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character
+    - match: "'"
+      scope: punctuation.definition.string.begin.fcfg
+      push: double_quoted_string
+
+    - match: '(?<=\=)[\?\w]+'
+      scope: constant.numeric
+      # push: nawias
+
+    # Comments begin with a '//' and finish at the end of the line
+    - match: '#'
+      scope: punctuation.definition.comment.fcfg
+      push: line_comment
+
+
+
+    # Keywords are if, else for and while.
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+
+    - match: '(?<=\=\[.)[A-Z]+'
+      scope: entity
+      push: inside_brackets
+
+    - match: '(?<=\=\[)[A-Z]+'
+      scope: entity
+      push: inside_brackets
+
+    - match: "->"
+      scope: entity
+
+    - match: '[+\-]'
+      scope: constant.numeric
+
+    - match: '[A-Z]+(?=\=)'
+      scope: storage
+
+    - match: '(?<=[+\-])[A-Z]+'
+      scope: storage
+
+    - match: '[A-Z]+(?=[\[\s])'
+      scope: keyword.control.fcfg
+
+  double_quoted_string:
+    - meta_scope: string.quoted.double.fcfg
+    - match: '\\.'
+      scope: constant.character.escape.fcfg
+    - match: "'"
+      scope: punctuation.definition.string.end.fcfg
+      pop: true
+
+  line_comment:
+    - meta_scope: comment.line.fcfg
+    - match: $
+      pop: true
+
+  inside_brackets:
+    - match: '[A-Z]+'
+      scope: entity
+    - match: '(?<=\=)[\?\w]+'
+      scope: constant.numeric
+    - match: '[+\-]'
+      scope: constant.numeric
+    - match: '\]'
+      pop: true
+
+  # nonterminal:
+  #   - meta_scope: keyword.control.fcfg
+  #   - match: '(=|\[|,)' 
+  #     scope: storage.end.fcfg
+  #     pop: true
+  
+  # nawias:
+  #   - meta_scope: string.quoted.double.fcfg
+  #   - match: '\[.*\],'
+  #     scope: constant.character.escape.fcfg
+  #   - match: '\]'
+  #     scope: punctuation.definition.string.end.fcfg
+  #     pop: true
+
